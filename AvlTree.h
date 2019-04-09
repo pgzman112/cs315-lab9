@@ -65,9 +65,9 @@ class AvlTree
     /**
      * Returns true if x is found in the tree.
      */
-    bool contains( const Comparable & x, vector<int> & lineno ) const
+    bool contains( const Comparable & x, vector<int> & lineno, int & compar ) const
     {
-        return contains( x, lineno, root );
+        return contains( x, lineno, root, compar );
     }
 
     /**
@@ -115,9 +115,9 @@ class AvlTree
     /**
      * Insert x into the tree; duplicates are ignored.
      */
-    void insert( const Comparable & x, const int & lineno )
+    void insert( const Comparable & x, const int & lineno, int & compar, int & rotates )
     {
-        insert( x, lineno, root );
+        insert( x, lineno, root, compar, rotates );
     }
 
     /**
@@ -181,33 +181,49 @@ class AvlTree
      * t is the node that roots the subtree.
      * Set the new root of the subtree.
      */
-    void insert( const Comparable & x, int lineno, AvlNode * & t )
+    void insert( const Comparable & x, int lineno, AvlNode * & t, int & compar, int & rotates )
     {
         if( t == NULL ){
+            compar++;
             t = new AvlNode( x, NULL, NULL );
             t->lineNumberList.push_back(lineno);
         }
         else if( x < t->element )
         {
-            insert( x, lineno, t->left );
+            compar = compar + 2;
+            insert( x, lineno, t->left, compar, rotates );
             if( height( t->left ) - height( t->right ) == 2 )
-                if( x < t->left->element )
+                if( x < t->left->element ){
+                    compar++;
+                    rotates++;
                     rotateWithLeftChild( t );
-                else
+                  }
+                else{
+                    compar++;
+                    rotates++;
                     doubleWithLeftChild( t );
+                }
         }
         else if( t->element < x )
         {
-            insert( x, lineno, t->right );
+            compar = compar + 3;
+            insert( x, lineno, t->right, compar, rotates );
             if( height( t->right ) - height( t->left ) == 2 )
-                if( t->right->element < x )
+                if( t->right->element < x ){
+                    compar++;
+                    rotates++;
                     rotateWithRightChild( t );
-                else
+                }
+                else{
+                    compar++;
+                    rotates++;
                     doubleWithRightChild( t );
+                }
         }
-        else
+        else{
+            compar = compar + 3;
             t->lineNumberList.push_back(lineno);  // Duplicate; do nothing
-
+        }
         t->height = max( height( t->left ), height( t->right ) ) + 1;
     }
 
@@ -242,15 +258,22 @@ class AvlTree
      * x is item to search for.
      * t is the node that roots the tree.
      */
-    bool contains( const Comparable & x, vector<int> & lineno, AvlNode *t ) const
+    bool contains( const Comparable & x, vector<int> & lineno, AvlNode *t, int & compar) const
     {
-        if( t == NULL )
+        if( t == NULL ){
+            compar++;
             return false;
-        else if( x < t->element )
-            return contains( x, lineno, t->left );
-        else if( t->element < x )
-            return contains( x, lineno, t->right );
+          }
+        else if( x < t->element ){
+            compar = compar + 2;
+            return contains( x, lineno, t->left, compar );
+          }
+        else if( t->element < x ){
+            compar = compar + 3;
+            return contains( x, lineno, t->right, compar );
+          }
         else{
+            compar = compar + 3;
             lineno = t->lineNumberList;
             return true;    // Match
         }

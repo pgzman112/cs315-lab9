@@ -22,14 +22,21 @@ int main(int argc, char* argv[]){
 	AvlTree<string> * myAvl = new AvlTree<string>();
 	buildTree(fileName, myAvl);
 
-	int userInput;
+
 
 	while(true){
+		int userInput;
 		cout << "Options: (1) display index, (2) search index, (3) save index, (4) quit" << endl;
 		cin >> userInput;
 
 		if(userInput < 1 || userInput > 4){
+			if(cin.fail()){
+				cin.clear();
+				cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+			}
 			cout << "Please enter a valid input" << endl;
+
 		}
 
 		else if(userInput == 1){
@@ -43,7 +50,8 @@ int main(int argc, char* argv[]){
 			cin >> in;
 
 			vector<int> lineNums;
-			if(myAvl->contains(in, lineNums) == true){
+			int compar = 0;
+			if(myAvl->contains(in, lineNums, compar) == true){
 				cout << "Line Numbers<bst>: ";
 				for(auto i = 0; i < lineNums.size(); i++){
 					cout <<  lineNums[i];
@@ -51,7 +59,10 @@ int main(int argc, char* argv[]){
 						cout << ", ";
 					}
 				}
-				cout << endl;
+				cout << "\n" << compar << " key comparisons to find this word." << endl;
+			}
+			else {
+				cout << "Word not found" << endl;
 			}
 
 		}
@@ -80,6 +91,8 @@ void buildTree(string fileName, AvlTree<string>* myAvl){
 	string str;
 	int wordCount = 0;
 	int lineCount = 0;
+	int compar = 0;
+	int rotates = 0;
 
 	while(getline(file, str)){
 		lineCount++;
@@ -93,7 +106,7 @@ void buildTree(string fileName, AvlTree<string>* myAvl){
 			}
 			else if(temp != ""){
 				wordCount++;
-				myAvl->insert(temp, lineCount);
+				myAvl->insert( temp, lineCount, compar, rotates );
 				temp = "";
 			}
 		} // end for
@@ -116,5 +129,7 @@ void buildTree(string fileName, AvlTree<string>* myAvl){
 	cout << "Total number of distinct words: " << myAvl->countTreeNodes() << endl;
 	cout << "Time taken to build index using BST was: " << time_span.count() << " seconds" << endl;
 	cout << "Heigh of the Binary Search Tree is: " << myAvl->TreeHeight() << endl;
+	cout << "Total number of key comparisons: " << compar << endl;
+	cout << "Total number of rotations: " << rotates << endl;
 
 } // end buildTree
