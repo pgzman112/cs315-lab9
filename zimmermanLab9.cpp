@@ -72,6 +72,7 @@ int main(int argc, char* argv[]){
 			cout << "Please enter a file name to save index too: ";
 			cin >> outFile;
 			myAvl->printTree(outFile);
+			cout << "Index successfully saved to: " << outFile << endl;
 		}
 		else if(userInput == 4){
 			break;
@@ -97,11 +98,11 @@ void buildTree(string fileName, AvlTree<string>* myAvl){
 	while(getline(file, str)){
 		lineCount++;
 		string temp = "";
-		for(int i = 0; i < str.length(); i++){
+		for(int i = 0; i <= str.length(); i++){
 			if(isalpha(str[i]) || isdigit(str[i])){
 				temp += str[i];
 			}
-			else if((isalpha(str[i+1]) || isdigit(str[i+1])) && isspace(str[i]) == false){
+			else if((isalpha(str[i+1]) || isdigit(str[i+1])) && isspace(str[i]) == false && i+1 <= str.length()){
 				temp += str[i];
 			}
 			else if(temp != ""){

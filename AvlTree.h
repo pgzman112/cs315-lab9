@@ -184,13 +184,12 @@ class AvlTree
     void insert( const Comparable & x, int lineno, AvlNode * & t, int & compar, int & rotates )
     {
         if( t == NULL ){
-            compar++;
             t = new AvlNode( x, NULL, NULL );
             t->lineNumberList.push_back(lineno);
         }
         else if( x < t->element )
         {
-            compar = compar + 2;
+            compar++;
             insert( x, lineno, t->left, compar, rotates );
             if( height( t->left ) - height( t->right ) == 2 )
                 if( x < t->left->element ){
@@ -200,13 +199,13 @@ class AvlTree
                   }
                 else{
                     compar++;
-                    rotates++;
+                    rotates = rotates + 2;
                     doubleWithLeftChild( t );
                 }
         }
         else if( t->element < x )
         {
-            compar = compar + 3;
+            compar = compar + 2;
             insert( x, lineno, t->right, compar, rotates );
             if( height( t->right ) - height( t->left ) == 2 )
                 if( t->right->element < x ){
@@ -216,12 +215,12 @@ class AvlTree
                 }
                 else{
                     compar++;
-                    rotates++;
+                    rotates = rotates + 2;
                     doubleWithRightChild( t );
                 }
         }
         else{
-            compar = compar + 3;
+            compar = compar + 2;
             t->lineNumberList.push_back(lineno);  // Duplicate; do nothing
         }
         t->height = max( height( t->left ), height( t->right ) ) + 1;
@@ -261,19 +260,18 @@ class AvlTree
     bool contains( const Comparable & x, vector<int> & lineno, AvlNode *t, int & compar) const
     {
         if( t == NULL ){
-            compar++;
             return false;
           }
         else if( x < t->element ){
-            compar = compar + 2;
+            compar++;
             return contains( x, lineno, t->left, compar );
           }
         else if( t->element < x ){
-            compar = compar + 3;
+            compar = compar + 2;
             return contains( x, lineno, t->right, compar );
           }
         else{
-            compar = compar + 3;
+            compar = compar + 2;
             lineno = t->lineNumberList;
             return true;    // Match
         }
