@@ -191,39 +191,17 @@ class AvlTree
         {
             compar++;
             insert( x, lineno, t->left, compar, rotates );
-            if( height( t->left ) - height( t->right ) == 2 )
-                if( x < t->left->element ){
-                    compar++;
-                    rotates++;
-                    rotateWithLeftChild( t );
-                  }
-                else{
-                    compar++;
-                    rotates = rotates + 2;
-                    doubleWithLeftChild( t );
-                }
         }
         else if( t->element < x )
         {
             compar = compar + 2;
             insert( x, lineno, t->right, compar, rotates );
-            if( height( t->right ) - height( t->left ) == 2 )
-                if( t->right->element < x ){
-                    compar++;
-                    rotates++;
-                    rotateWithRightChild( t );
-                }
-                else{
-                    compar++;
-                    rotates = rotates + 2;
-                    doubleWithRightChild( t );
-                }
         }
         else{
             compar = compar + 2;
             t->lineNumberList.push_back(lineno);  // Duplicate; do nothing
         }
-        t->height = max( height( t->left ), height( t->right ) ) + 1;
+        balance(t, rotates);
     }
 
     /**
@@ -415,6 +393,37 @@ class AvlTree
         return(1 + countTreeNodes(t->left) + countTreeNodes(t->right));
       }
     }
+
+    static const int ALLOWED_IMBALANCE = 1;
+
+   // Assume t is balanced or within one of being balanced
+   void balance( AvlNode * & t, int & rotates )
+   {
+       if( t == nullptr )
+           return;
+
+       if( height( t->left ) - height( t->right ) > ALLOWED_IMBALANCE )
+           if( height( t->left->left ) >= height( t->left->right ) ){
+               rotates++;
+               rotateWithLeftChild( t );
+           }
+           else{
+               rotates += 2;
+               doubleWithLeftChild( t );
+           }
+       else
+       if( height( t->right ) - height( t->left ) > ALLOWED_IMBALANCE )
+           if( height( t->right->right ) >= height( t->right->left ) ){
+               rotates++;
+               rotateWithRightChild( t );
+           }
+           else{
+               rotates += 2;
+               doubleWithRightChild( t );
+           }
+
+       t->height = max( height( t->left ), height( t->right ) ) + 1;
+   }
 };
 
 #endif

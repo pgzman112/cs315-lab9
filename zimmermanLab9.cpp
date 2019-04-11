@@ -113,15 +113,6 @@ void buildTree(string fileName, AvlTree<string>* myAvl){
 		} // end for
 	} // end while
 
-	//  finish_time = clock();
-	//  double time;
-	// // double time = (finish_time - start_time) / CLOCKS_PER_SEC;
-	// time = (double) ((finish_time - start_time) / CLOCKS_PER_SEC);
-
-	// cout << "start: " << std::fixed << start_time << endl;
-	// cout << "end: " << finish_time << endl;
-	// cout << "clocks: " << CLOCKS_PER_SEC << endl;'
-
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
 	duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
